@@ -4,16 +4,16 @@
   <% include nav.ejs %>
   <div class="col-lg-12" style="padding:0px 200px">
     <!-- left col -->
-    <div class="col-lg-8 well" style="height:100%">
+    <div class="col-lg-8 well" style="height:100%;overflow:scroll">
       <table class="table table-bordered">
         <tr style="text-align:center">
           <td>NO.</td><td>Code</td><td>Type</td><td colspan="2">Manage</td>
         </tr>
         <% for(var i=0;i<data.length;i++){ %>
           <tr style="text-align:center">
-            <td><%= i+1 %></td><td><a href="#"><%= data[i] %></a></td><td><%= data[i] %></td>
-            <td><a href="#"><input type="button" value="edit" style="width:100%"></a></td>
-            <td><a href="#"><input type="button" value="del" style="width:100%"></a></td>
+            <td><%= i+1 %></td><td><a href="/goodsdetail?code=<%= data[i] %>"><%= data[i] %></a></td><td><%= data[i] %></td>
+            <td><a href="/goodsedit?code=<%= data[i] %>"><input type="button" value="edit" style="width:100%"></a></td>
+            <td><a href="/goodsdel?code=<%= data[i] %>"><input type="button" value="del" style="width:100%"></a></td>
           </tr>
         <% } %>
       </table>

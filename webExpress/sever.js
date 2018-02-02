@@ -23,7 +23,7 @@ app.get('/home',function(req,res){
 
 app.get('/store',function(req,res){
   var ex_content = [];
-  for(var i = 0;i<=6;i++){
+  for(var i = 0;i<=20;i++){
     ex_content[i] = "example_content."+(i+1)
   }
   res.render('store',{
@@ -33,7 +33,19 @@ app.get('/store',function(req,res){
 });
 
 app.get('/customer',function(req,res){
-  res.render('customer');
+  var ex_content = [];
+  var test_history = [];
+  for(var i = 0;i<=6;i++){
+    ex_content[i] = "example_content."+(i+1)
+  }
+  for(var i = 0;i<=20;i++){
+    test_history[i] = "* [Topic@] [User@] example_history_"+(i+1)
+  }
+  res.render('customer',{
+    data : ex_content,
+    type : ex_content,
+    sample_history : test_history
+  });
 });
 
 app.get('/logout',function(req,res){
@@ -43,10 +55,12 @@ app.get('/logout',function(req,res){
 //post method
 app.post('/home',function(req,res){
   var reqLogin = req.body;
-
-  res.render('home',{
-    p_content : 'content example'
-  });
+  if (reqLogin['name'] != '' && reqLogin['password'] != '') {
+    res.render('home',{p_content : 'xxxxx'});
+  }
+  else {
+    res.render('index');
+  }
 });
 
 //listen port

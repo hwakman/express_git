@@ -3,9 +3,45 @@
 <body style="height:520px">
   <% include nav.ejs %>
   <div class="col-lg-12" style="padding:0px 200px">
-    <div class="col-lg-8" style="height:100%">
+    <!-- left col -->
+    <div class="col-lg-8 well" style="height:100%;overflow:scroll">
+      <table class="table table-bordered">
+        <tr style="text-align:center">
+          <td>NO.</td><td>Code</td><td>Type</td><td colspan="2">Manage</td>
+        </tr>
+        <% for(var i=0;i<data.length;i++){ %>
+          <tr style="text-align:center">
+            <td><%= i+1 %></td><td><a href="/userdetail?name=<%= data[i] %>"><%= data[i] %></a></td><td><%= data[i] %></td>
+            <td><a href="/send?user=<%= data[i] %>"><input type="button" value="Message" style="width:100%"></a></td>
+            <td><a href="/flag?user=<%= data[i] %>"><input type="button" value="Red flag" style="width:100%"></a></td>
+          </tr>
+        <% } %>
+      </table>
+      <hr>
     </div>
-    <div class="col-lg-4"></div>
+    <!--start right col -->
+    <div class="col-lg-4">
+      <!-- search bar -->
+      <div class="well" style="height:13%">
+          <input style="width:65%" type="text" placeholder="Search">
+          <input style="width:30%" type="submit" value="Search">
+        </div>
+        <!-- add form -->
+      <div class="well" style="height:83%">
+        <div style="height:83%;background-color:white;padding:10px;overflow:scroll">
+          <table class="table">
+            <% for(var i=0;i<sample_history.length;i++){ %>
+              <tr><td><a href="/history?content=<%= sample_history[i] %>"><%= sample_history[i] %></a></td></tr>
+            <% } %>
+          </table>
+        </div>
+        <div style="padding:10px;height:15%">
+          <input style="width:65%" type="text" placeholder="History search">
+          <input style="width:30%" type="submit" value="Search">
+        </div>
+      </div>
+    </div>
+    <!-- end right col -->
   </div>
   <hr>
 </body>
