@@ -1,0 +1,64 @@
+<head>
+  <% include head.ejs %>
+<body style="height:520px">
+  <% include nav.ejs %>
+  <div class="col-lg-12" style="padding:0px 200px">
+    <!-- left col -->
+    <div class="col-lg-8 well" style="height:100%">
+      <table class="table table-bordered">
+        <tr style="text-align:center">
+          <td>NO.</td><td>Code</td><td>Type</td><td colspan="2">Manage</td>
+        </tr>
+        <% for(var i=0;i<data.length;i++){ %>
+          <tr style="text-align:center">
+            <td><%= i+1 %></td><td><a href="#"><%= data[i] %></a></td><td><%= data[i] %></td>
+            <td><a href="#"><input type="button" value="edit" style="width:100%"></a></td>
+            <td><a href="#"><input type="button" value="del" style="width:100%"></a></td>
+          </tr>
+        <% } %>
+      </table>
+      <hr>
+    </div>
+    <!--start right col -->
+    <div class="col-lg-4">
+      <!-- search bar -->
+      <div class="well" style="height:13%">
+          <input style="width:65%" type="text" placeholder="Search">
+          <input style="width:30%" type="submit" value="Search">
+        </div>
+        <!-- add form -->
+      <div class="well" style="height:83%">
+        <div style="padding:10px">
+          <h4>Add item form</h4>
+        </div>
+        <div>
+          <table class="table table-bordered">
+            <tr>
+              <td>Code</td>
+              <td><input style="width:100%" type="text" placeholder="input code"></td>
+            </tr>
+            <tr>
+              <td>Type</td>
+              <td><input style="width:100%" type="text" placeholder="input type"></td>
+            </tr>
+            <tr>
+              <td>price</td>
+              <td><input style="width:100%" type="number" placeholder="input price"></td>
+            </tr>
+            <tr>
+              <td>expire date</td>
+              <td><input style="width:100%" type="date" placeholder="select expire date"></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td><input style="width:100%" type="submit" value="Add"></td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+    <!-- end right col -->
+  </div>
+  <hr>
+</body>
+</head>
