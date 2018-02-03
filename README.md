@@ -1,3 +1,6 @@
+### document
+- (Posposal 1) https://goo.gl/YcMvao
+
 ### How to use
 
 1. Install node js
