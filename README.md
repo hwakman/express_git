@@ -1,4 +1,4 @@
-### document
+### Document
 - (Posposal 1) https://goo.gl/YcMvao
 
 ### How to use
