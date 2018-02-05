@@ -33,7 +33,6 @@ app.get('/store',function(req,res){
 });
 
 app.get('/goodsdetail',function(req,res){
-  console.log()
   res.render('goodsdetail',{
     code : req.query['code']
   });
@@ -42,8 +41,8 @@ app.get('/goodsdetail',function(req,res){
 app.get('/customer',function(req,res){
   var ex_content = [];
   var test_history = [];
-  for(var i = 0;i<=6;i++){
-    ex_content[i] = "example_content."+(i+1)
+  for(var i = 0;i<=20;i++){
+    ex_content[i] = "Example_Name_"+(i+1)
   }
   for(var i = 0;i<=20;i++){
     test_history[i] = "* [Topic@] [User@] example_history_"+(i+1)
@@ -52,6 +51,12 @@ app.get('/customer',function(req,res){
     data : ex_content,
     type : ex_content,
     sample_history : test_history
+  });
+});
+
+app.get('/userdetail',function(req,res){
+  res.render('userdetail',{
+    name : req.query['name']
   });
 });
 
@@ -72,5 +77,5 @@ app.post('/home',function(req,res){
 
 //listen port
 app.listen('8000',function(){
-  console.log('listen on localhost:3030');
+  console.log('listen on localhost:8000');
 });
