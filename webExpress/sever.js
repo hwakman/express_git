@@ -24,11 +24,18 @@ app.get('/home',function(req,res){
 app.get('/store',function(req,res){
   var ex_content = [];
   for(var i = 0;i<=20;i++){
-    ex_content[i] = "example_content."+(i+1)
+    ex_content[i] = "Example_content_"+(i+1)
   }
   res.render('store',{
     data : ex_content,
     type : ex_content
+  });
+});
+
+app.get('/goodsdetail',function(req,res){
+  console.log()
+  res.render('goodsdetail',{
+    code : req.query['code']
   });
 });
 
