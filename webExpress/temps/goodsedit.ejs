@@ -1,0 +1,28 @@
+<head>
+  <% include head.ejs %>
+<body style="height:520px">
+  <% include nav.ejs %>
+  <div class="col-lg-12" style="padding:0px 200px">
+    <!-- left col -->
+    <div class="col-lg-12 well" style="height:100%;overflow:scroll">
+      <p style="text-align:center"><b>Regis Goods Details</b></p>
+      <form method="post" action="/edit_goods_conf">
+        <table class="table table-bordered">
+          <tr><td>Code</td><td><input style="width:100%" type="text" name="code" value="<%= code %>"></td></tr>
+          <tr><td>Name</td><td><input style="width:100%" type="text" name="name" value="<%= name %>"></td></tr>
+          <tr><td>Price</td><td><input style="width:100%" type="text" name="price" value="<%= price %>"></td></tr>
+          <tr><td>Total</td><td><input style="width:100%" type="text" name="total" value="<%= total %>"></td></tr>
+          <tr><td colspan="2">Details</td></tr>
+          <tr><td colspan="2"><textarea name="detail" style="resize:none;width:100%"><%= note %></textarea></td></tr>
+          <tr><td>Register Date</td><td><input style="width:100%" type="text" name="reg_date" value="<%= reg_date %>"></td></tr>
+          <tr><td>Expiry Date</td><td><input type="text" name="ex_date" value="<%= ex_date %>"></td></tr>
+          <tr><td colspan="2">Note</td></tr>
+          <tr><td colspan="2"><textarea name="note" style="resize:none;width:100%"><%= note %></textarea></td></tr>
+          <tr><td colspan="2"><input type="submit" value="Commit"></td></tr>
+        </table>
+      </form>
+    </div>
+  </div>
+  <hr>
+</body>
+</head>

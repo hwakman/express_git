@@ -6,12 +6,12 @@
     <!-- left col -->
     <div class="col-lg-8 well" style="height:100%;overflow:scroll">
       <table class="table table-bordered">
-        <tr style="text-align:center">
-          <td>NO.</td><td>Code</td><td>Type</td><td colspan="2">Manage</td>
+        <tr style="text-align:center;background-color:gray;color:white">
+          <td><b>NO.</b></td><td><b>Code</b></td><td><b>Name</b></td><td colspan="2"><b>Manage</b></td>
         </tr>
         <% for(var i=0;i<data.length;i++){ %>
           <tr style="text-align:center">
-            <td><%= i+1 %></td><td><a href="/goodsdetail?code=<%= data[i] %>"><%= data[i] %></a></td><td><%= data[i] %></td>
+            <td><%= i+1 %></td><td><a href="/goodsdetail?code=<%= data[i] %>"><%= data[i] %></a></td><td><%= name[i] %></td>
             <td><a href="/goodsedit?code=<%= data[i] %>"><input type="button" value="edit" style="width:100%"></a></td>
             <td><a href="/goodsdel?code=<%= data[i] %>"><input type="button" value="del" style="width:100%"></a></td>
           </tr>
@@ -32,28 +32,30 @@
           <h4>Add item form</h4>
         </div>
         <div>
-          <table class="table table-bordered">
-            <tr>
-              <td>Code</td>
-              <td><input style="width:100%" type="text" placeholder="input code"></td>
-            </tr>
-            <tr>
-              <td>Type</td>
-              <td><input style="width:100%" type="text" placeholder="input type"></td>
-            </tr>
-            <tr>
-              <td>price</td>
-              <td><input style="width:100%" type="number" placeholder="input price"></td>
-            </tr>
-            <tr>
-              <td>expire date</td>
-              <td><input style="width:100%" type="date" placeholder="select expire date"></td>
-            </tr>
-            <tr>
-              <td></td>
-              <td><input style="width:100%" type="submit" value="Add"></td>
-            </tr>
-          </table>
+          <form method="post" action="/regis_goods">
+            <table class="table table-bordered">
+              <tr>
+                <td>Code</td>
+                <td><input style="width:100%" type="text" placeholder="input code" name="code"></td>
+              </tr>
+              <tr>
+                <td>Name</td>
+                <td><input style="width:100%" type="text" placeholder="input type" name="name"></td>
+              </tr>
+              <tr>
+                <td>Price</td>
+                <td><input style="width:100%" type="number" placeholder="input price" name="price"></td>
+              </tr>
+              <tr>
+                <td>Expire date</td>
+                <td><input style="width:100%" type="date" placeholder="select expire date" name="ex_date"></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td><input style="width:100%" type="submit" value="Add"></td>
+              </tr>
+            </table>
+          </form>
         </div>
       </div>
     </div>
