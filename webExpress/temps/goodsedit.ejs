@@ -8,7 +8,7 @@
       <p style="text-align:center"><b>Regis Goods Details</b></p>
       <form method="post" action="/edit_goods_conf">
         <table class="table table-bordered">
-          <tr><td>Code</td><td><input style="width:100%" type="text" name="code" value="<%= code %>"></td></tr>
+          <tr><td>Code (*)</td><td><input style="width:100%;pointer-events:none" type="text" name="code" value="<%= code %>"></td></tr>
           <tr><td>Name</td><td><input style="width:100%" type="text" name="name" value="<%= name %>"></td></tr>
           <tr><td>Price</td><td><input style="width:100%" type="text" name="price" value="<%= price %>"></td></tr>
           <tr><td>Total</td><td><input style="width:100%" type="text" name="total" value="<%= total %>"></td></tr>

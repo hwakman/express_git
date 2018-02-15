@@ -36,18 +36,39 @@ app.get('/home',function(req,res){
 });
 
 app.get('/store',function(req,res){
-  conn.query('SELECT * FROM goods',function(err,result){
-    var code = [];
-    var name = [];
-    for (var i = 0; i < result.length; i++) {
-      code[i] = result[i].code;
-      name[i] = result[i].name;
-    }
-    res.render('store',{
-      data : code,
-      name : name
+  if (req.query['search'] == null) {
+    conn.query('SELECT * FROM goods ORDER BY code DESC',function(err,result){
+      var code = [];
+      var name = [];
+      for (var i = 0; i < result.length; i++) {
+        code[i] = result[i].code;
+        name[i] = result[i].name;
+      }
+      res.render('store',{
+        data : code,
+        name : name
+      });
     });
-  });
+  }
+  else {
+    conn.query("SELECT * FROM goods WHERE code = '"+req.query['search']+"' OR name = '"+req.query['search']+"'",function(err,result){
+      if(result != ''){
+        var code = [];
+        var name = [];
+        for (var i = 0; i < result.length; i++) {
+          code[i] = result[i].code;
+          name[i] = result[i].name;
+        }
+        res.render('store',{
+          data : code,
+          name : name
+        });
+      }
+      else {
+        res.redirect('/store');
+      }
+    });
+  }
 });
 
 app.get('/goodsdetail',function(req,res){
@@ -119,6 +140,13 @@ app.get('/goodsedit',function(req,res){
   });
 });
 
+app.get('/goodsdel',function(req,res){
+  conn.query("DELETE FROM goods WHERE code = '"+req.query['code']+"'",function(err,result){
+    if(err) throw err;
+    res.redirect('/store');
+  });
+});
+
 app.get('/customer',function(req,res){
   var ex_content = [];
   var test_history = [];
@@ -177,36 +205,41 @@ app.post('/regis_goods',function(req,res){
 app.post('/regis_goods_conf',function(req,res){
   var reqPass = req.body;
   console.log(reqPass);
-  conn.query("SELECT count(*) as count FROM goods WHERE code='"+reqPass['code']+"'",function(err,result){
-    if(result[0].count < 1){
-      var sql = "INSERT INTO goods VALUE (";
-      sql += "'"+reqPass['code']+"',";
-      sql += "'"+reqPass['name']+"',";
-      sql += "'"+reqPass['price']+"',";
-      sql += "'"+reqPass['total']+"',";
-      sql += "'"+(reqPass['total']*reqPass['price'])+"',";
-      sql += "'"+reqPass['detail']+"',";
-      sql += "'"+reqPass['reg_date']+"',";
-      sql += "'"+reqPass['ex_date']+"',";
-      sql += "'"+reqPass['note']+"'";
-      sql += ")";
-      console.log(sql);
-      conn.query(sql,function(err){
-        if(err) throw err;
-        console.log('insert !');
-      });
-    }
-  });
-  res.render('regis_goods_conf',{
-    code : reqPass['code'],
-    name : reqPass['name'],
-    price : reqPass['price'],
-    total : reqPass['total'],
-    detail : reqPass['detail'],
-    reg_date : reqPass['reg_date'],
-    ex_date : reqPass['ex_date'],
-    note : reqPass['note'],
-  });
+  if(reqPass['code'] != '' && reqPass['name'] != ''){
+    conn.query("SELECT count(*) as count FROM goods WHERE code='"+reqPass['code']+"'",function(err,result){
+      if(result[0].count < 1){
+        var sql = "INSERT INTO goods VALUE (";
+        sql += "'"+reqPass['code']+"',";
+        sql += "'"+reqPass['name']+"',";
+        sql += "'"+reqPass['price']+"',";
+        sql += "'"+reqPass['total']+"',";
+        sql += "'"+(reqPass['total']*reqPass['price'])+"',";
+        sql += "'"+reqPass['detail']+"',";
+        sql += "'"+reqPass['reg_date']+"',";
+        sql += "'"+reqPass['ex_date']+"',";
+        sql += "'"+reqPass['note']+"'";
+        sql += ")";
+        console.log(sql);
+        conn.query(sql,function(err){
+          if(err) throw err;
+          console.log('insert !');
+        });
+        res.render('regis_goods_conf',{
+          code : reqPass['code'],
+          name : reqPass['name'],
+          price : reqPass['price'],
+          total : reqPass['total'],
+          detail : reqPass['detail'],
+          reg_date : reqPass['reg_date'],
+          ex_date : reqPass['ex_date'],
+          note : reqPass['note'],
+        });
+      }
+    });
+  }
+  else{
+    res.redirect('/store');
+  }
 });
 
 app.post('/edit_goods_conf',function(req,res){
@@ -216,6 +249,7 @@ app.post('/edit_goods_conf',function(req,res){
   sql += " name = '"+reqPass['name']+"',";
   sql += " price = '"+reqPass['price']+"',";
   sql += " total = '"+reqPass['total']+"',";
+  sql += " total_price = '"+(reqPass['price']*reqPass['total'])+"',";
   sql += " detail = '"+reqPass['detail']+"',";
   sql += " reg_date = '"+reqPass['reg_date']+"',";
   sql += " ex_date = '"+reqPass['ex_date']+"',";
