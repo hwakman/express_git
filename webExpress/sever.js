@@ -37,7 +37,7 @@ app.get('/home',function(req,res){
 
 app.get('/store',function(req,res){
   if (req.query['search'] == null) {
-    conn.query('SELECT * FROM goods ORDER BY code DESC',function(err,result){
+    conn.query('SELECT * FROM goods ORDER BY code',function(err,result){
       var code = [];
       var name = [];
       for (var i = 0; i < result.length; i++) {
@@ -51,7 +51,7 @@ app.get('/store',function(req,res){
     });
   }
   else {
-    conn.query("SELECT * FROM goods WHERE code = '"+req.query['search']+"' OR name = '"+req.query['search']+"'",function(err,result){
+    conn.query("SELECT * FROM goods WHERE code = '"+req.query['search']+"' OR name like '%"+req.query['search']+"%'",function(err,result){
       if(result != ''){
         var code = [];
         var name = [];
@@ -145,6 +145,10 @@ app.get('/goodsdel',function(req,res){
     if(err) throw err;
     res.redirect('/store');
   });
+});
+
+app.get('/reg_form',function(req,res){
+  res.render('reg_form');
 });
 
 app.get('/customer',function(req,res){
