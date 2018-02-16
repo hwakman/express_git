@@ -6,14 +6,14 @@
     <!-- left col -->
     <div class="col-lg-8 well" style="height:100%;overflow:scroll">
       <table class="table table-bordered">
-        <tr style="text-align:center">
-          <td>NO.</td><td>Code</td><td>Type</td><td colspan="2">Manage</td>
+        <tr style="text-align:center;background-color:gray;color:white">
+          <td><b>NO.</b></td><td><b>Name</b></td><td><b>Email</b></td><td colspan="2"><b>Manage</b></td>
         </tr>
-        <% for(var i=0;i<data.length;i++){ %>
+        <% for(var i=0;i<name.length;i++){ %>
           <tr style="text-align:center">
-            <td><%= i+1 %></td><td><a href="/userdetail?name=<%= data[i] %>"><%= data[i] %></a></td><td><%= data[i] %></td>
-            <td><a href="/send?user=<%= data[i] %>"><input type="button" value="Message" style="width:100%"></a></td>
-            <td><a href="/flag?user=<%= data[i] %>"><input type="button" value="Red flag" style="width:100%"></a></td>
+            <td><%= i+1 %></td><td><a href="/userdetail?name=<%= email[i] %>"><%= name[i] %></a></td><td><%= email[i] %></td>
+            <td><a href="/send?user=<%= email[i] %>"><input type="button" value="Message" style="width:100%"></a></td>
+            <td><a href="/flag?user=<%= email[i] %>"><input type="button" value="EDIT" style="width:100%"></a></td>
           </tr>
         <% } %>
       </table>

@@ -4,7 +4,7 @@
   <% include nav.ejs %>
   <div class="col-lg-12" style="padding:0px 200px">
     <!-- left col -->
-    <div class="col-lg-8 well" style="height:100%;overflow:scroll">
+    <div class="col-lg-8 well" style="height:100%">
       <table class="table table-bordered">
         <tr style="text-align:center">
           <td colspan="2" style="background-color:gray;color:white"><b>Customer Detail</b></td>
@@ -15,25 +15,30 @@
         </tr>
         <tr>
           <td>E-mail</td>
-          <td style="background-color:white">Example E-mail</td>
+          <td style="background-color:white"><%= email %></td>
         </tr>
         <tr>
           <td>TEL</td>
-          <td style="background-color:white">Example Number</td>
+          <td style="background-color:white"><%= tel %></td>
         </tr>
         <tr>
           <td>Status</td>
-          <td style="background-color:white">Example Status</td>
+          <td style="background-color:white"><%= status %></td>
         </tr>
         <tr>
           <td colspan="2">Address</td>
         </tr>
         <tr>
-          <td colspan="2" style="background-color:white;height:150px">Example Address</td>
+          <td colspan="2" style="background-color:white;height:150px"><%= address %></td>
         </tr>
         <tr>
           <td>Last Login</td>
           <td style="background-color:white">Example Date</td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <a href="/customer"><input type="button" value="Back"></a>
+          </td>
         </tr>
       </table>
     </div>

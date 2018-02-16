@@ -152,24 +152,43 @@ app.get('/reg_form',function(req,res){
 });
 
 app.get('/customer',function(req,res){
-  var ex_content = [];
-  var test_history = [];
-  for(var i = 0;i<=20;i++){
-    ex_content[i] = "Example_Name_"+(i+1)
-  }
-  for(var i = 0;i<=20;i++){
-    test_history[i] = "* [Topic@] [User@] example_history_"+(i+1)
-  }
-  res.render('customer',{
-    data : ex_content,
-    type : ex_content,
-    sample_history : test_history
+  conn.query("SELECT * FROM user",function(err,result){
+    var name = [];
+    var email = [];
+    var test_history = [];
+    for (var i = 0; i < result.length; i++) {
+      name[i] = result[i].name;
+      email[i] = result[i].email;
+    }
+    res.render('customer',{
+      name : name,
+      email : email,
+      sample_history : test_history
+    });
   });
 });
 
 app.get('/userdetail',function(req,res){
-  res.render('userdetail',{
-    name : req.query['name']
+  var name = [];
+  var email = [];
+  var tel = [];
+  var status = [];
+  var address = [];
+  conn.query("SELECT * FROM user WHERE email='"+req.query['name']+"'",function(err,result){
+    for (var i = 0; i < result.length; i++) {
+      name[i] = result[i].name;
+      email[i] = result[i].email;
+      tel[i] = result[i].tel;
+      status[i] = result[i].status;
+      address[i] = result[i].address;
+    }
+    res.render('userdetail',{
+      name : name,
+      email : email,
+      tel : tel,
+      status : status,
+      address : address,
+    });
   });
 });
 
@@ -188,6 +207,31 @@ app.post('/home',function(req,res){
       res.redirect('/');
     }
   });
+});
+
+app.post('/regis_commit',function(req,res){
+  var reqLogin = req.body;
+  console.log(reqLogin);
+  if(reqLogin['password'] == reqLogin['conf_password']){
+    conn.query("SELECT * FROM user WHERE email='"+reqLogin['email']+"'",function(err,result){
+      if (result != '' && result != null){
+        res.redirect('/reg_form');
+      }
+      else{
+        conn.query("INSERT INTO user VALUE ('"+reqLogin['name']+"','"+reqLogin['email']+"','"+reqLogin['tel']+"','"+reqLogin['status']+"','"+reqLogin['address']+"')",function(err){
+          if(err) throw err;
+          console.log("Insert user");
+        });
+        conn.query("INSERT INTO authen VALUE ('"+reqLogin['email']+"','"+reqLogin['password']+"','003')",function(err){
+          console.log("Insert authen");
+        });
+        res.redirect('/');
+      }
+    });
+  }
+  else {
+    res.redirect('/reg_form');
+  }
 });
 
 app.post('/store',function(req,res){

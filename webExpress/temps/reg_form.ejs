@@ -1,6 +1,6 @@
 <head>
   <% include head.ejs %>
-<body style="height:520px">
+<body style="height:655px">
   <div class="col-lg-12">
     <nav class="navbar navbar-inverse" style="padding:0px 200px">
       <div class="container-fluid">
@@ -12,8 +12,8 @@
   </div>
   <div class="col-lg-12" style="padding:0px 200px">
     <!-- left col -->
-    <div class="col-lg-12 well" style="height:100%;overflow:scroll">
-      <form>
+    <div class="col-lg-12 well" style="height:100%">
+      <form method="post" action="/regis_commit">
         <table class="table table-bordered">
           <tr style="text-align:center">
             <td colspan="2" style="background-color:gray;color:white"><b>Register Form</b></td>
@@ -21,37 +21,37 @@
           <tr>
             <td style="width:20%">Name</td>
             <td style="width:80%;background-color:white">
-              <input style="width:100%" type="text" name="name">
+              <input style="width:100%" type="text" name="name" placeholder=" Name . . .">
             </td>
           </tr>
           <tr>
             <td>E-mail</td>
             <td style="background-color:white">
-              <input style="width:100%" type="E-mail" name="email">
+              <input style="width:100%" type="E-mail" name="email" placeholder=" E-mail . . .">
             </td>
           </tr>
           <tr>
             <td>Password</td>
             <td style="background-color:white">
-              <input style="width:100%" type="E-mail" name="email">
+              <input style="width:100%" type="password" name="password" placeholder=" Password . . .">
             </td>
           </tr>
           <tr>
             <td>Confirm Password</td>
             <td style="background-color:white">
-              <input style="width:100%" type="E-mail" name="email">
+              <input style="width:100%" type="password" name="conf_password" placeholder=" Confirm-Password . . .">
             </td>
           </tr>
           <tr>
             <td>TEL</td>
             <td style="background-color:white">
-              <input style="width:100%" type="text" name="tel">
+              <input style="width:100%" type="text" name="tel" placeholder=" Tel . . .">
             </td>
           </tr>
           <tr>
             <td>Status</td>
             <td style="background-color:white">
-              <input style="width:100%" type="text" name="status">
+              <input style="width:100%" type="text" name="status" placeholder=" Status . . .">
             </td>
           </tr>
           <tr>
@@ -59,7 +59,12 @@
           </tr>
           <tr>
             <td colspan="2">
-              <textarea name="address" style="height:150px;width:100%"></textarea>
+              <textarea name="address" style="height:150px;width:100%;resize:none" placeholder=" Address . . ."></textarea>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <input type="submit" value="Commit">
             </td>
           </tr>
         </table>
