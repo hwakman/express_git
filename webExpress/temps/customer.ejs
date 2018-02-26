@@ -28,17 +28,17 @@
         </div>
         <!-- add form -->
       <div class="well" style="height:83%">
-        <div style="height:83%;background-color:white;padding:10px;overflow:scroll">
-          <table class="table">
-            <% for(var i=0;i<sample_history.length;i++){ %>
-              <tr><td><a href="/history?content=<%= sample_history[i] %>"><%= sample_history[i] %></a></td></tr>
-            <% } %>
-          </table>
-        </div>
         <div style="padding:10px;height:15%">
-          <input style="width:65%" type="text" placeholder="History search">
-          <input style="width:30%" type="submit" value="Search">
+          <input style="width:100%" type="text" placeholder="Send to">
         </div>
+        <table class="table">
+          <tr>
+            <td><textarea name="message" style="resize:none;height:250px;width:100%"></textarea></td>
+          </tr>
+          <tr>
+            <td><input type="submit" value="send"></td>
+          </tr>
+        </table>
       </div>
     </div>
     <!-- end right col -->

@@ -15,6 +15,23 @@ conn.connect(function (err){
   console.log('connected !');
 });
 
+// sample user START
+var testUser = "";
+for(var i=1;i<=10;i++){
+  conn.query("SELECT * FROM user WHERE name = 'US00"+i+"'",function(err,result){
+    if (result == '') {
+      testUser = "INSERT INTO user VALUE ('US00"+i+"','email_"+i+"','tel_"+i+"','status_"+i+"','adress_"+i+"');\n";
+      conn.query(testUser);
+    }
+    else {
+      testUser = "DELETE FROM user WHERE name = 'US00"+i+"'\n";
+      testUser = "INSERT INTO user VALUE ('US00"+i+"','email_"+i+"','tel_"+i+"','status_"+i+"','adress_"+i+"');\n";
+      conn.query(testUser);
+    }
+  });
+}
+// sample user END
+
 //set method
 app.set('view engine','ejs');
 app.set('views','./temps');
@@ -30,8 +47,32 @@ app.get('/',function(req ,res){
 });
 
 app.get('/home',function(req,res){
-  res.render('home',{
-    p_content : 'content example'
+  var topic = [];
+  var content = [];
+  conn.query("SELECT * FROM new_feed ORDER BY topic DESC",function(err,result){
+    for(var i = 0 ; i < result.length ; i++){
+      topic[i]   = result[i].topic;
+      content[i] = result[i].content;
+    }
+    res.render('home',{
+      topic : topic,
+      content : content
+    });
+  });
+});
+
+app.get('/news',function(req,res){
+  var topic = [];
+  var content = [];
+  conn.query("SELECT * FROM new_feed WHERE topic='"+req.query['topic']+"'",function(err,result){
+    for (var i = 0; i < result.length; i++) {
+      topic[i] = result[i].topic;
+      content[i] = result[i].content;
+    }
+    res.render('news_content',{
+      topic : topic,
+      content : content
+    });
   });
 });
 
@@ -201,12 +242,18 @@ app.post('/home',function(req,res){
   var reqLogin = req.body;
   conn.query("SELECT * FROM authen WHERE email='"+reqLogin['name']+"' AND password='"+reqLogin['password']+"'",function (err,result){
     if (result != '' && result != null) {
-      res.render('home');
+      res.redirect('/home');
     }
     else {
       res.redirect('/');
     }
   });
+});
+
+app.post('/post_news',function(req,res){
+  var reqLogin = req.body;
+  conn.query("INSERT INTO new_feed VALUE('"+reqLogin['n_topic']+"','"+reqLogin['n_content']+"','')");
+  res.redirect('/home');
 });
 
 app.post('/regis_commit',function(req,res){

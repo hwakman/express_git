@@ -1,0 +1,29 @@
+<head>
+  <% include head.ejs %>
+<body style="height:655px">
+  <div class="col-lg-12">
+    <% include nav.ejs %>
+  </div>
+  <div class="col-lg-12" style="padding:0px 200px">
+    <!-- left col -->
+    <div class="col-lg-12 well" style="height:100%">
+        <table class="table table-bordered">
+          <tr>
+            <td style="width:10%"><b>TOPIC</b></td>
+            <td style="background-color:white"><%= topic[0] %></td>
+          </tr>
+          <tr>
+            <td colspan="2"><b>Content</b></td>
+          </tr>
+          <tr>
+            <td colspan="2" style="background-color:white;height:450px"><%= content[0] %></td>
+          </tr>
+          <tr>
+            <td colspan="2"><a href="/home"><input type="button" value="back"></a></td>
+          </tr>
+        </table>
+    </div>
+  </div>
+  <hr>
+</body>
+</head>
