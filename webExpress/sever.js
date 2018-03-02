@@ -1,6 +1,7 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var app = express();
+var session = require('express-session');
 var nodeadmin = require('nodeadmin');
 var mysql = require('mysql');
 var conn = mysql.createConnection({
@@ -9,35 +10,17 @@ var conn = mysql.createConnection({
   password: '1234',
   database: 'user',
 });
-
 conn.connect(function (err){
   if(err) throw err;
   console.log('connected !');
 });
-
-// sample user START
-var testUser = "";
-for(var i=1;i<=10;i++){
-  conn.query("SELECT * FROM user WHERE name = 'US00"+i+"'",function(err,result){
-    if (result == '') {
-      testUser = "INSERT INTO user VALUE ('US00"+i+"','email_"+i+"','tel_"+i+"','status_"+i+"','adress_"+i+"');\n";
-      conn.query(testUser);
-    }
-    else {
-      testUser = "DELETE FROM user WHERE name = 'US00"+i+"'\n";
-      testUser = "INSERT INTO user VALUE ('US00"+i+"','email_"+i+"','tel_"+i+"','status_"+i+"','adress_"+i+"');\n";
-      conn.query(testUser);
-    }
-  });
-}
-// sample user END
-
 //set method
 app.set('view engine','ejs');
 app.set('views','./temps');
 
 //use method
 app.use(nodeadmin(app));
+app.use(session({secret: "Secret Key!"}));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
 
@@ -47,53 +30,65 @@ app.get('/',function(req ,res){
 });
 
 app.get('/home',function(req,res){
-  var topic = [];
-  var content = [];
-  conn.query("SELECT * FROM new_feed ORDER BY topic DESC",function(err,result){
-    for(var i = 0 ; i < result.length ; i++){
-      topic[i]   = result[i].topic;
-      content[i] = result[i].content;
-    }
-    res.render('home',{
-      topic : topic,
-      content : content
-    });
-  });
-});
-
-app.get('/news',function(req,res){
-  var topic = [];
-  var content = [];
-  conn.query("SELECT * FROM new_feed WHERE topic='"+req.query['topic']+"'",function(err,result){
-    for (var i = 0; i < result.length; i++) {
-      topic[i] = result[i].topic;
-      content[i] = result[i].content;
-    }
-    res.render('news_content',{
-      topic : topic,
-      content : content
-    });
-  });
-});
-
-app.get('/store',function(req,res){
-  if (req.query['search'] == null) {
-    conn.query('SELECT * FROM goods ORDER BY code',function(err,result){
-      var code = [];
-      var name = [];
-      for (var i = 0; i < result.length; i++) {
-        code[i] = result[i].code;
-        name[i] = result[i].name;
+  if(req.session.authen == null){
+    res.redirect('/');
+  }
+  else{
+    var autor = [];
+    var topic = [];
+    var content = [];
+    var code = [];
+    var action = [];
+    conn.query("SELECT * FROM new_feed ORDER BY  post_date DESC",function(err,result){
+      for(var i = 0 ; i < result.length ; i++){
+        autor[i]   = result[i].post_by;
+        topic[i]   = result[i].topic;
+        content[i] = result[i].content;
       }
-      res.render('store',{
-        data : code,
-        name : name
+      conn.query("SELECT * FROM history ORDER BY date DESC LIMIT 5",function(err,result){
+        for (var i = 0; i < result.length; i++) {
+          code[i] = result[i].user;
+          action[i] = result[i].topic;
+        }
+        res.render('home',{
+          autor : autor,
+          topic : topic,
+          content : content,
+          code : code,
+          action : action
+        });
       });
     });
   }
+});
+
+app.get('/news',function(req,res){
+  if(req.session.authen == null){
+    res.redirect('/');
+  }
   else {
-    conn.query("SELECT * FROM goods WHERE code = '"+req.query['search']+"' OR name like '%"+req.query['search']+"%'",function(err,result){
-      if(result != ''){
+    var topic = [];
+    var content = [];
+    conn.query("SELECT * FROM new_feed WHERE topic='"+req.query['topic']+"'",function(err,result){
+      for (var i = 0; i < result.length; i++) {
+        topic[i] = result[i].topic;
+        content[i] = result[i].content;
+      }
+      res.render('news_content',{
+        topic : topic,
+        content : content
+      });
+    });
+  }
+});
+
+app.get('/store',function(req,res){
+  if(req.session.authen == null){
+    res.redirect('/');
+  }
+  else {
+    if (req.query['search'] == null) {
+      conn.query('SELECT * FROM goods ORDER BY code',function(err,result){
         var code = [];
         var name = [];
         for (var i = 0; i < result.length; i++) {
@@ -104,48 +99,74 @@ app.get('/store',function(req,res){
           data : code,
           name : name
         });
-      }
-      else {
-        res.redirect('/store');
-      }
-    });
+      });
+    }
+    else {
+      conn.query("SELECT * FROM goods WHERE code = '"+req.query['search']+"' OR name like '"+req.query['search']+"%'",function(err,result){
+        if(result != ''){
+          var code = [];
+          var name = [];
+          for (var i = 0; i < result.length; i++) {
+            code[i] = result[i].code;
+            name[i] = result[i].name;
+          }
+          res.render('store',{
+            data : code,
+            name : name
+          });
+        }
+        else {
+          res.redirect('/store');
+        }
+      });
+    }
   }
 });
 
 app.get('/goodsdetail',function(req,res){
-  conn.query("SELECT * FROM goods WHERE code = '"+req.query['code']+"'",function(err,result){
-    var code = [];
-    var name = [];
-    var price = [];
-    var total = [];
-    var total_price = [];
-    var detail = [];
-    var reg_date = [];
-    var ex_date = [];
-    var note = [];
-    for (var i = 0; i < result.length; i++) {
-      code[i] = result[i].code;
-      name[i] = result[i].name;
-      price[i] = result[i].price;
-      total[i] = result[i].total;
-      total_price[i] = result[i].total_price;
-      detail[i] = result[i].detail;
-      reg_date[i] = result[i].reg_date;
-      ex_date[i] = result[i].ex_date;
-      note[i] = result[i].note;
-    }
-    res.render('goodsdetail',{
-      code : code,
-      name : name,
-      price : price,
-      total : total,
-      total_price : total_price,
-      detail : detail,
-      reg_date : reg_date,
-      ex_date : ex_date,
-      note : note
+  if(req.session.authen == null){
+    res.redirect('/');
+  }
+  else {
+    conn.query("SELECT * FROM goods WHERE code = '"+req.query['code']+"'",function(err,result){
+      var code = [];
+      var name = [];
+      var price = [];
+      var total = [];
+      var total_price = [];
+      var detail = [];
+      var reg_date = [];
+      var ex_date = [];
+      var note = [];
+      if (result == '') {
+          code = 'This item does not exist or was deleted !';
+      }
+      else {
+        for (var i = 0; i < result.length; i++) {
+          code[i] = result[i].code;
+          name[i] = result[i].name;
+          price[i] = result[i].price;
+          total[i] = result[i].total;
+          total_price[i] = result[i].total_price;
+          detail[i] = result[i].detail;
+          reg_date[i] = result[i].reg_date;
+          ex_date[i] = result[i].ex_date;
+          note[i] = result[i].note;
+        }
+      }
+      res.render('goodsdetail',{
+        code : code,
+        name : name,
+        price : price,
+        total : total,
+        total_price : total_price,
+        detail : detail,
+        reg_date : reg_date,
+        ex_date : ex_date,
+        note : note
+      });
     });
-  });
+  }
 });
 
 app.get('/goodsedit',function(req,res){
@@ -184,8 +205,12 @@ app.get('/goodsedit',function(req,res){
 app.get('/goodsdel',function(req,res){
   conn.query("DELETE FROM goods WHERE code = '"+req.query['code']+"'",function(err,result){
     if(err) throw err;
-    res.redirect('/store');
   });
+  conn.query("INSERT INTO history VALUE ('"+req.query['code']+"','DELETE','"+Date.now()+"')",function(err){
+    if (err) throw err;
+    console.log('history update !');
+  });
+  res.redirect('/store');
 });
 
 app.get('/reg_form',function(req,res){
@@ -193,20 +218,39 @@ app.get('/reg_form',function(req,res){
 });
 
 app.get('/customer',function(req,res){
-  conn.query("SELECT * FROM user",function(err,result){
+  if(req.session.authen == null){
+    res.redirect('/');
+  }
+  else {
     var name = [];
     var email = [];
     var test_history = [];
-    for (var i = 0; i < result.length; i++) {
-      name[i] = result[i].name;
-      email[i] = result[i].email;
+    console.log(req.session.authen);
+    if (req.query['search'] != null) {
+      conn.query("SELECT * FROM user WHERE name = '"+req.query['search']+"' or email like '"+req.query['search']+"%'",function(err,result){
+        for (var i = 0; i < result.length; i++) {
+          name[i] = result[i].name;
+          email[i] = result[i].email;
+        }
+        res.render('customer',{
+          name : name,
+          email : email
+        });
+      });
     }
-    res.render('customer',{
-      name : name,
-      email : email,
-      sample_history : test_history
-    });
-  });
+    else {
+      conn.query("SELECT * FROM user",function(err,result){
+        for (var i = 0; i < result.length; i++) {
+          name[i] = result[i].name;
+          email[i] = result[i].email;
+        }
+        res.render('customer',{
+          name : name,
+          email : email
+        });
+      });
+    }
+  }
 });
 
 app.get('/userdetail',function(req,res){
@@ -234,6 +278,7 @@ app.get('/userdetail',function(req,res){
 });
 
 app.get('/logout',function(req,res){
+  req.session.authen = null;
   res.render('index');
 });
 
@@ -242,6 +287,7 @@ app.post('/home',function(req,res){
   var reqLogin = req.body;
   conn.query("SELECT * FROM authen WHERE email='"+reqLogin['name']+"' AND password='"+reqLogin['password']+"'",function (err,result){
     if (result != '' && result != null) {
+      req.session.authen = reqLogin['name']
       res.redirect('/home');
     }
     else {
@@ -252,7 +298,7 @@ app.post('/home',function(req,res){
 
 app.post('/post_news',function(req,res){
   var reqLogin = req.body;
-  conn.query("INSERT INTO new_feed VALUE('"+reqLogin['n_topic']+"','"+reqLogin['n_content']+"','')");
+  conn.query("INSERT INTO new_feed VALUE('"+reqLogin['n_topic']+"','"+reqLogin['n_content']+"','"+req.session.authen+"','"+Date.now()+"')");
   res.redirect('/home');
 });
 
@@ -319,6 +365,10 @@ app.post('/regis_goods_conf',function(req,res){
           if(err) throw err;
           console.log('insert !');
         });
+        conn.query("INSERT INTO history VALUE ('"+reqPass['code']+"','CREATE','"+Date.now()+"')",function(err){
+          if (err) throw err;
+          console.log('history update !');
+        });
         res.render('regis_goods_conf',{
           code : reqPass['code'],
           name : reqPass['name'],
@@ -354,6 +404,10 @@ app.post('/edit_goods_conf',function(req,res){
   conn.query(sql,function(err){
     if(err) throw err;
     console.log('insert !');
+  });
+  conn.query("INSERT INTO history VALUE ('"+reqPass['code']+"','UPDATE','"+Date.now()+"')",function(err){
+    if (err) throw err;
+    console.log('history update !');
   });
   res.render('regis_goods_conf',{
     code : reqPass['code'],
