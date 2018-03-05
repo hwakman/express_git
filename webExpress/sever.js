@@ -14,6 +14,15 @@ conn.connect(function (err){
   if(err) throw err;
   console.log('connected !');
 });
+
+function addslashes(str) {
+    str = str.replace(/\\/g, '\\\\');
+    str = str.replace(/\'/g, '\\\'');
+    str = str.replace(/\"/g, '\\"');
+    str = str.replace(/\0/g, '\\0');
+    return str;
+}
+
 //set method
 app.set('view engine','ejs');
 app.set('views','./temps');
@@ -39,6 +48,8 @@ app.get('/home',function(req,res){
     var content = [];
     var code = [];
     var action = [];
+    var post_user = [];
+    var message = [];
     conn.query("SELECT * FROM new_feed ORDER BY  post_date DESC",function(err,result){
       for(var i = 0 ; i < result.length ; i++){
         autor[i]   = result[i].post_by;
@@ -50,12 +61,21 @@ app.get('/home',function(req,res){
           code[i] = result[i].user;
           action[i] = result[i].topic;
         }
-        res.render('home',{
-          autor : autor,
-          topic : topic,
-          content : content,
-          code : code,
-          action : action
+        conn.query("SELECT * FROM message WHERE get_user = '"+req.session.authen+"' ORDER BY get_date DESC",function(err,result){
+          for (var i = 0; i < result.length; i++) {
+            post_user[i] = result[i].post_user;
+            message[i] = result[i].message;
+          }
+          console.log(result);
+          res.render('home',{
+            autor : autor,
+            topic : topic,
+            content : content,
+            code : code,
+            action : action,
+            message : message,
+            post_user : post_user,
+          });
         });
       });
     });
@@ -80,6 +100,27 @@ app.get('/news',function(req,res){
       });
     });
   }
+});
+
+app.get('/read_message',function(req,res){
+  var post = [];
+  var message = [];
+  var sql = "SELECT * FROM message";
+  sql += " WHERE (post_user ='"+req.query['user']+"' AND get_user = '"+req.session.authen+"')";
+  sql += " OR (post_user ='"+req.session.authen+"' AND get_user = '"+req.query['user']+"')";
+  sql += " ORDER BY get_date DESC LIMIT 5";
+  conn.query(sql,function(err,result){
+    for (var i = 0; i < result.length; i++) {
+      post[i] = result[i].post_user;
+      message[i] = result[i].message;
+    }
+    res.render('message',{
+      post : post,
+      message : message,
+      email : req.query['user'],
+      login_user : req.session.authen,
+    });
+  });
 });
 
 app.get('/store',function(req,res){
@@ -234,7 +275,8 @@ app.get('/customer',function(req,res){
         }
         res.render('customer',{
           name : name,
-          email : email
+          email : email,
+          login_user : req.session.authen,
         });
       });
     }
@@ -246,10 +288,44 @@ app.get('/customer',function(req,res){
         }
         res.render('customer',{
           name : name,
-          email : email
+          email : email,
+          login_user : req.session.authen,
         });
       });
     }
+  }
+});
+
+app.get('/message_send',function(req,res){
+  console.log(req.query['user']);
+});
+
+app.post('/message_send',function(req,res){
+  if(req.body['get_user']!='' && req.body['message'] != ''){
+    console.log(req.body['get_user'],req.body['message']);
+    conn.query("SELECT * FROM user WHERE email='"+req.body['get_user']+"'",function(err,result){
+      if(result != ''){
+        conn.query("INSERT INTO message VALUE('"+req.body['get_user']+"','"+req.body['message']+"','"+req.session.authen+"','"+Date.now()+"')");
+      }
+      res.redirect('/customer');
+    });
+  }
+  else {
+    res.redirect('/customer');
+  }
+});
+
+app.post('/message_send_re',function(req,res){
+  if(req.body['get_user']!='' && req.body['message'] != ''){
+    conn.query("SELECT * FROM user WHERE email='"+req.body['get_user']+"'",function(err,result){
+      if(result != ''){
+        conn.query("INSERT INTO message VALUE('"+req.body['get_user']+"','"+addslashes(req.body['message'])+"','"+req.session.authen+"','"+Date.now()+"')");
+      }
+      res.redirect("/read_message?user="+req.body['get_user']+"");
+    });
+  }
+  else {
+    res.redirect("/read_message?user="+req.body['get_user']+"");
   }
 });
 

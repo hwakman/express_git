@@ -51,10 +51,16 @@
         </div>
       </div>
       <!-- button -->
-      <div class="panel panel-default" style="height:49%">
+      <div class="panel panel-default" style="height:49%;overflow:scroll">
         <!-- panal topic -->
-        <div class="panel-heading">Inbox</div>
-          <!-- panel content -->
+        <div class="panel-heading"><b>Inbox</b></div>
+          <table class="table table-default">
+            <%for(var i=0;i<message.length;i++){%>
+              <tr>
+                <td><a href="/read_message?user=<%=post_user[i]%>">*[Message] <%=post_user[i]%></a></td>
+              </tr>
+            <%}%>
+          </table>
         <div class="panel-body">
         </div>
       </div>
