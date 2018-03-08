@@ -66,7 +66,6 @@ app.get('/home',function(req,res){
             post_user[i] = result[i].post_user;
             message[i] = result[i].message;
           }
-          console.log(result);
           res.render('home',{
             autor : autor,
             topic : topic,
@@ -138,7 +137,8 @@ app.get('/store',function(req,res){
         }
         res.render('store',{
           data : code,
-          name : name
+          name : name,
+          login_user : req.session.authen
         });
       });
     }
@@ -249,7 +249,6 @@ app.get('/goodsdel',function(req,res){
   });
   conn.query("INSERT INTO history VALUE ('"+req.query['code']+"','DELETE','"+Date.now()+"')",function(err){
     if (err) throw err;
-    console.log('history update !');
   });
   res.redirect('/store');
 });
@@ -266,7 +265,6 @@ app.get('/customer',function(req,res){
     var name = [];
     var email = [];
     var test_history = [];
-    console.log(req.session.authen);
     if (req.query['search'] != null) {
       conn.query("SELECT * FROM user WHERE name = '"+req.query['search']+"' or email like '"+req.query['search']+"%'",function(err,result){
         for (var i = 0; i < result.length; i++) {
@@ -302,12 +300,11 @@ app.get('/message_send',function(req,res){
 
 app.post('/message_send',function(req,res){
   if(req.body['get_user']!='' && req.body['message'] != ''){
-    console.log(req.body['get_user'],req.body['message']);
     conn.query("SELECT * FROM user WHERE email='"+req.body['get_user']+"'",function(err,result){
       if(result != ''){
         conn.query("INSERT INTO message VALUE('"+req.body['get_user']+"','"+req.body['message']+"','"+req.session.authen+"','"+Date.now()+"')");
       }
-      res.redirect('/customer');
+      res.redirect('/read_message?user='+req.body['get_user']+'');
     });
   }
   else {
@@ -380,7 +377,6 @@ app.post('/post_news',function(req,res){
 
 app.post('/regis_commit',function(req,res){
   var reqLogin = req.body;
-  console.log(reqLogin);
   if(reqLogin['password'] == reqLogin['conf_password']){
     conn.query("SELECT * FROM user WHERE email='"+reqLogin['email']+"'",function(err,result){
       if (result != '' && result != null){
@@ -389,7 +385,6 @@ app.post('/regis_commit',function(req,res){
       else{
         conn.query("INSERT INTO user VALUE ('"+reqLogin['name']+"','"+reqLogin['email']+"','"+reqLogin['tel']+"','"+reqLogin['status']+"','"+reqLogin['address']+"')",function(err){
           if(err) throw err;
-          console.log("Insert user");
         });
         conn.query("INSERT INTO authen VALUE ('"+reqLogin['email']+"','"+reqLogin['password']+"','003')",function(err){
           console.log("Insert authen");
@@ -410,7 +405,6 @@ app.post('/store',function(req,res){
 
 app.post('/regis_goods',function(req,res){
   var reqPass = req.body;
-  console.log(reqPass);
   res.render('regis_goods',{
     code : reqPass['code'],
     name : reqPass['name'],
@@ -421,7 +415,6 @@ app.post('/regis_goods',function(req,res){
 
 app.post('/regis_goods_conf',function(req,res){
   var reqPass = req.body;
-  console.log(reqPass);
   if(reqPass['code'] != '' && reqPass['name'] != ''){
     conn.query("SELECT count(*) as count FROM goods WHERE code='"+reqPass['code']+"'",function(err,result){
       if(result[0].count < 1){
@@ -436,7 +429,6 @@ app.post('/regis_goods_conf',function(req,res){
         sql += "'"+reqPass['ex_date']+"',";
         sql += "'"+reqPass['note']+"'";
         sql += ")";
-        console.log(sql);
         conn.query(sql,function(err){
           if(err) throw err;
           console.log('insert !');
@@ -465,7 +457,6 @@ app.post('/regis_goods_conf',function(req,res){
 
 app.post('/edit_goods_conf',function(req,res){
   var reqPass = req.body;
-  console.log(reqPass);
   var sql = "UPDATE goods SET ";
   sql += " name = '"+reqPass['name']+"',";
   sql += " price = '"+reqPass['price']+"',";
@@ -475,8 +466,7 @@ app.post('/edit_goods_conf',function(req,res){
   sql += " reg_date = '"+reqPass['reg_date']+"',";
   sql += " ex_date = '"+reqPass['ex_date']+"',";
   sql += " note = '"+reqPass['note']+"'";
-  sql += "WHERE code = '"+reqPass['code']+"'"
-  console.log(sql);
+  sql += "WHERE code = '"+reqPass['code']+"'";
   conn.query(sql,function(err){
     if(err) throw err;
     console.log('insert !');

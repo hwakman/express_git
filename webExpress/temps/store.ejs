@@ -1,5 +1,20 @@
 <head>
   <% include head.ejs %>
+  <script>
+    $(function(){
+      var goods_list = <%= name %>;
+      $('#list').autocomplete({
+        source: goods_list
+      });
+    });
+  </script>
+  <style>
+    button:disabled {
+      background: #dddddd;
+      color: #ffff00;
+    }
+  </style>
+</head>
 <body style="height:520px">
   <% include nav.ejs %>
   <div class="col-lg-12" style="padding:0px 200px">
@@ -12,8 +27,9 @@
         <% for(var i=0;i<data.length;i++){ %>
           <tr style="text-align:center">
             <td><%= i+1 %></td><td><a href="/goodsdetail?code=<%= data[i] %>"><%= data[i] %></a></td><td><%= name[i] %></td>
-            <td><a href="/goodsedit?code=<%= data[i] %>"><input type="button" value="edit" style="width:100%"></a></td>
-            <td><a href="/goodsdel?code=<%= data[i] %>"><input type="button" value="del" style="width:100%"></a></td>
+            <td><a href="/goodsedit?code=<%= data[i] %>"><input type="button" value="EDIT" style="width:100%"></a></td>
+            <%if(login_user == 'master@tni.test'){%><td><a href="/goodsdel?code=<%= data[i] %>" onclick="return confirm('Are you sure ?')"><input type="button" value="DELETE" style="width:100%"></a></td><%}%>
+            <%if(login_user != 'master@tni.test'){%><td><input type="button" value="DELETE" style="width:100%" disabled></td><%}%>
           </tr>
         <% } %>
       </table>
@@ -24,14 +40,14 @@
       <!-- search bar -->
       <div class="well" style="height:13%">
         <form method="get" action="/store">
-          <input style="width:65%" name="search" type="text" placeholder="Search">
+          <input style="width:65%" name="search" id="list" placeholder="Search">
           <input style="width:30%" type="submit" value="Search">
         </form>
       </div>
         <!-- add form -->
       <div class="well" style="height:83%">
         <div style="padding:10px">
-          <h4>Add item form</h4>
+          <h4>Create New</h4>
         </div>
         <div>
           <form method="post" action="/regis_goods">
@@ -65,4 +81,3 @@
   </div>
   <hr>
 </body>
-</head>

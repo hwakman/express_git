@@ -5,6 +5,24 @@
       background: #dddddd;
       color: #ffff00;
     }
+    .is_loginuser{
+      text-align:right;
+      background: linear-gradient(to left, gray, lightgray , white);
+      color:white;
+    }
+    .not_loginuser{
+      background: linear-gradient(to right, gray, lightgray, white);
+      color:white;
+    }
+    .message{
+      background-color:white;
+      height:75px;
+    }
+    .message_right{
+      text-align:right;
+      background-color:white;
+      height:75px;
+    }
   </style>
 </head>
 <body style="height:520px">
@@ -15,18 +33,18 @@
       <table class="table table-bordered">
         <%for(var i = 0; i < message.length; i++){%>
           <%if(post[i] == login_user){%>
-            <tr style="text-align:right;background-color:gray;color:white">
+            <tr class="is_loginuser">
               <td><b>Me</b></td>
             </tr>
-            <tr style="text-align:right;background-color:white;min-height:200px">
+            <tr class="message_right">
               <td><%=message[i]%></td>
             </tr>
           <%}%>
           <%if(post[i] != login_user){%>
-            <tr style="background-color:gray;color:white">
+            <tr class="not_loginuser">
               <td><b>From : <%=post[i]%></b></td>
             </tr>
-            <tr style="background-color:white;min-height:200px">
+            <tr class="message">
               <td><%=message[i]%></td>
             </tr>
           <%}%>

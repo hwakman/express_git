@@ -6,6 +6,20 @@
       color: #ffff00;
     }
   </style>
+  <script>
+    $( function() {
+      var availableTags = <%=email%>
+      $( "#tags" ).autocomplete({
+        source: availableTags
+      });
+    } );
+    $(function(){
+      var nameTag = <%=name%>
+      $("#tag_names").autocomplete({
+        source: nameTag
+      });
+    });
+</script>
 </head>
 <body style="height:520px">
   <% include nav.ejs %>
@@ -14,7 +28,7 @@
     <div class="col-lg-8 well" style="height:100%;overflow:scroll">
       <table class="table table-bordered">
         <tr style="text-align:center;background-color:gray;color:white">
-          <td><b>NO.</b></td><td><b>Name</b></td><td><b>Email</b></td><td colspan="2"><b>Manage</b></td>
+          <td><b>NO.</b></td><td><b>Name</b></td><td><b>Email</b></td><td><b>Manage</b></td>
         </tr>
         <% for(var i=0;i<name.length;i++){ %>
           <tr style="text-align:center">
@@ -25,7 +39,6 @@
             <%if(login_user != email[i]){%>
               <td><a href="/read_message?user=<%= email[i] %>"><input type="button" value="Message" style="width:100%"></a></td>
             <%}%>
-            <td><a href="/flag?user=<%= email[i] %>"><input type="button" value="EDIT" style="width:100%" disabled></a></td>
           </tr>
         <% } %>
       </table>
@@ -36,7 +49,7 @@
       <!-- search bar -->
       <div class="well" style="height:13%">
           <form method="get" action="/customer">
-            <input style="width:65%" type="text" placeholder="Search" name='search'>
+            <input style="width:65%" id="tag_names" placeholder="Search" name='search'>
             <input style="width:30%" type="submit" value="Search">
           </form>
       </div>
@@ -45,7 +58,9 @@
         <form method="post" action="/message_send">
           <table class="table">
             <tr>
-              <td><input name="get_user" style="width:100%" type="text" placeholder="Send to (email)"></td>
+              <td>
+                <input name="get_user" style="width:100%" id="tags" placeholder="Send to (email)">
+              </td>
             </tr>
             <tr>
               <td><textarea name="message" style="resize:none;height:250px;width:100%"></textarea></td>
