@@ -50,6 +50,7 @@ app.get('/home',function(req,res){
     var action = [];
     var post_user = [];
     var message = [];
+    var message_approve = [];
     conn.query("SELECT * FROM new_feed ORDER BY  post_date DESC",function(err,result){
       for(var i = 0 ; i < result.length ; i++){
         autor[i]   = result[i].post_by;
@@ -66,15 +67,35 @@ app.get('/home',function(req,res){
             post_user[i] = result[i].post_user;
             message[i] = result[i].message;
           }
-          res.render('home',{
-            autor : autor,
-            topic : topic,
-            content : content,
-            code : code,
-            action : action,
-            message : message,
-            post_user : post_user,
-          });
+          if (req.session.authen == 'master@tni.test') {
+            conn.query("SELECT * FROM approve_goods ORDER BY update_date DESC",function(err,result){
+              for (var i = 0; i < result.length; i++) {
+                message_approve[i] = result[i].code;
+              }
+              res.render('home',{
+                autor : autor,
+                topic : topic,
+                content : content,
+                code : code,
+                action : action,
+                message_approve : message_approve,
+                post_user : post_user,
+                login_user : req.session.authen,
+              });
+            });
+          }
+          else {
+            res.render('home',{
+              autor : autor,
+              topic : topic,
+              content : content,
+              code : code,
+              action : action,
+              message : message,
+              post_user : post_user,
+              login_user : req.session.authen,
+            });
+          }
         });
       });
     });
@@ -211,36 +232,70 @@ app.get('/goodsdetail',function(req,res){
 });
 
 app.get('/goodsedit',function(req,res){
-  conn.query("SELECT * FROM goods WHERE code = '"+req.query['code']+"'",function(err,result){
-    var code = [];
-    var name = [];
-    var price = [];
-    var total = [];
-    var detail = [];
-    var reg_date = [];
-    var ex_date = [];
-    var note = [];
-    for (var i = 0; i < result.length; i++) {
-      code[i] = result[i].code;
-      name[i] = result[i].name;
-      price[i] = result[i].price;
-      total[i] = result[i].total;
-      detail[i] = result[i].detail;
-      reg_date[i] = result[i].reg_date;
-      ex_date[i] = result[i].ex_date;
-      note[i] = result[i].note;
-    }
-    res.render('goodsedit',{
-      code : code,
-      name : name,
-      price : price,
-      total : total,
-      detail : detail,
-      reg_date : reg_date,
-      ex_date : ex_date,
-      note : note
+  if(req.query['code_approve'] != null && req.session.authen == 'master@tni.test'){
+    conn.query("SELECT * FROM approve_goods WHERE code = '"+req.query['code_approve']+"'",function(err,result){
+      var code = [];
+      var name = [];
+      var price = [];
+      var total = [];
+      var detail = [];
+      var reg_date = [];
+      var ex_date = [];
+      var note = [];
+      for (var i = 0; i < result.length; i++) {
+        code[i] = result[i].code;
+        name[i] = result[i].f_01;
+        price[i] = result[i].f_02;
+        total[i] = result[i].f_03;
+        detail[i] = result[i].f_05;
+        reg_date[i] = result[i].f_06;
+        ex_date[i] = result[i].f_07;
+        note[i] = result[i].f_08;
+      }
+      res.render('goodsedit',{
+        code : code,
+        name : name,
+        price : price,
+        total : total,
+        detail : detail,
+        reg_date : reg_date,
+        ex_date : ex_date,
+        note : note
+      });
     });
-  });
+  }
+  else {
+    conn.query("SELECT * FROM goods WHERE code = '"+req.query['code']+"'",function(err,result){
+      var code = [];
+      var name = [];
+      var price = [];
+      var total = [];
+      var detail = [];
+      var reg_date = [];
+      var ex_date = [];
+      var note = [];
+      for (var i = 0; i < result.length; i++) {
+        code[i] = result[i].code;
+        name[i] = result[i].name;
+        price[i] = result[i].price;
+        total[i] = result[i].total;
+        detail[i] = result[i].detail;
+        reg_date[i] = result[i].reg_date;
+        ex_date[i] = result[i].ex_date;
+        note[i] = result[i].note;
+      }
+      res.render('goodsedit',{
+        code : code,
+        name : name,
+        price : price,
+        total : total,
+        detail : detail,
+        reg_date : reg_date,
+        ex_date : ex_date,
+        note : note
+      });
+    });
+  }
 });
 
 app.get('/goodsdel',function(req,res){
@@ -467,14 +522,38 @@ app.post('/edit_goods_conf',function(req,res){
   sql += " ex_date = '"+reqPass['ex_date']+"',";
   sql += " note = '"+reqPass['note']+"'";
   sql += "WHERE code = '"+reqPass['code']+"'";
-  conn.query(sql,function(err){
-    if(err) throw err;
-    console.log('insert !');
-  });
-  conn.query("INSERT INTO history VALUE ('"+reqPass['code']+"','UPDATE','"+Date.now()+"')",function(err){
-    if (err) throw err;
-    console.log('history update !');
-  });
+  if (req.session.authen == 'master@tni.test') {
+    conn.query(sql,function(err){
+      if(err) throw err;
+      console.log('insert !');
+    });
+    conn.query("INSERT INTO history VALUE ('"+reqPass['code']+"','UPDATE','"+Date.now()+"')",function(err){
+      if (err) throw err;
+      console.log('history update !');
+    });
+    conn.query("SELECT * FROM approve_goods WHERE code = '"+reqPass['code']+"'",function(err,result){
+      if (result != '') {
+        conn.query("DELETE FROM approve_goods WHERE code = '"+reqPass['code']+"'");
+      }
+    });
+  }
+  else {
+    var sql_a = "INSERT INTO approve_goods VALUE (";
+    sql_a += "'"+reqPass['code']+"',";
+    sql_a += "'"+reqPass['name']+"',";
+    sql_a += "'"+reqPass['price']+"',";
+    sql_a += "'"+reqPass['total']+"',";
+    sql_a += "'"+(reqPass['price']*reqPass['total'])+"',";
+    sql_a += "'"+reqPass['detail']+"',";
+    sql_a += "'"+reqPass['reg_date']+"',";
+    sql_a += "'"+reqPass['ex_date']+"',";
+    sql_a += "'"+reqPass['note']+"',";
+    sql_a += "'"+Date.now()+"')";
+    conn.query(sql_a,function(err){
+      if(err) throw err;
+      console.log('Wait for approve !');
+    });
+  }
   res.render('regis_goods_conf',{
     code : reqPass['code'],
     name : reqPass['name'],
@@ -485,6 +564,11 @@ app.post('/edit_goods_conf',function(req,res){
     ex_date : reqPass['ex_date'],
     note : reqPass['note'],
   });
+});
+
+app.get('/req_rej',function(req,res){
+  conn.query("DELETE FROM approve_goods WHERE code = '"+req.query['code']+"'");
+  res.redirect('/home');
 });
 
 //listen port

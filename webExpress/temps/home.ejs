@@ -55,10 +55,20 @@
         <!-- panal topic -->
         <div class="panel-heading"><b>Inbox</b></div>
           <table class="table table-default">
-            <%for(var i=0;i<message.length;i++){%>
+            <%if(login_user == 'master@tni.test'){%>
+              <%for(var i=0;i<message_approve.length;i++){%>
+                <tr>
+                  <td><a href="/goodsedit?code_approve=<%=message_approve[i]%>">Request for EDIT item code <b>[<%=message_approve[i]%>]</b></a></td>
+                  <td style="width:25%"><a href="/req_rej?code=<%=message_approve[i]%>" onclick="return confirm('Are you sure ?')">[ REJECT ]</a></td>
+                </tr>
+              <%}%>
+            <%}%>
+            <%if(login_user != 'master@tni.test'){%>
+            <%for(var i=0;i<10;i++){%>
               <tr>
-                <td><a href="/read_message?user=<%=post_user[i]%>">*[Message] <%=post_user[i]%></a></td>
+                <td><a href="/read_message?user=<%=post_user[i]%>"> [Message] <b><%=post_user[i]%></b></a></td>
               </tr>
+            <%}%>
             <%}%>
           </table>
         <div class="panel-body">
