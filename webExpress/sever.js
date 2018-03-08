@@ -51,7 +51,7 @@ app.get('/home',function(req,res){
     var post_user = [];
     var message = [];
     var message_approve = [];
-    conn.query("SELECT * FROM new_feed ORDER BY  post_date DESC",function(err,result){
+    conn.query("SELECT * FROM new_feed ORDER BY  post_date DESC LIMIT 15",function(err,result){
       for(var i = 0 ; i < result.length ; i++){
         autor[i]   = result[i].post_by;
         topic[i]   = result[i].topic;

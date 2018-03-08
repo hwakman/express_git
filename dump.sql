@@ -55,107 +55,24 @@ CREATE TABLE user_status (
     edit_date varchar(255),
     comment varchar(255)
 );
+
+CREATE TABLE message (
+    get_user varchar(255),
+    message varchar(255),
+    post_user varchar(255),
+    get_date varchar(255)
+);
+
+CREATE TABLE approve_goods (
+    code varchar(255),
+    f_01 varchar(255),
+    f_02 varchar(255),
+    f_03 varchar(255),
+    f_04 varchar(255),
+    f_05 varchar(255),
+    f_06 varchar(255),
+    f_07 varchar(255),
+    f_08 varchar(255),
+    update_date varchar(255)
+);
 -- Create Table End
-
--- Example Data Start
--- Authen
-INSERT INTO authen
-VALUES ('master@tni.test','1234','001');
-
-INSERT INTO authen
-VALUES ('supportmaster@tni.test','1234','002');
-
-INSERT INTO authen
-VALUES ('normal@tni.test','1234','003');
-
--- Goods
-INSERT INTO goods
-VALUES ('CD001','Red Car','','','','','','','');
-
-INSERT INTO goods
-VALUES ('CD002','Red Cat','','','','','','','');
-
-INSERT INTO goods
-VALUES ('CD003','Red Apple','','','','','','','');
-
-INSERT INTO goods
-VALUES ('CD004','Red Smartphone','','','','','','','');
-
-INSERT INTO goods
-VALUES ('CD005','Red Shirt','','','','','','','');
-
-INSERT INTO goods
-VALUES ('CD006','Red Dog','','','','','','','');
-
-INSERT INTO goods
-VALUES ('CD007','Red Box','','','','','','','');
-
-INSERT INTO goods
-VALUES ('CD008','Red Board','','','','','','','');
-
-INSERT INTO goods
-VALUES ('CD009','Red Tiger','','','','','','','');
-
-INSERT INTO goods
-VALUES ('CD010','Red Pig','','','','','','','');
-
-INSERT INTO goods
-VALUES ('CD011','Blue Car','','','','','','','');
-
-INSERT INTO goods
-VALUES ('CD012','Blue Cat','','','','','','','');
-
-INSERT INTO goods
-VALUES ('CD013','Blue Apple','','','','','','','');
-
-INSERT INTO goods
-VALUES ('CD014','Blue Smartphone','','','','','','','');
-
-INSERT INTO goods
-VALUES ('CD015','Blue Shirt','','','','','','','');
-
-INSERT INTO goods
-VALUES ('CD016','Blue Dog','','','','','','','');
-
-INSERT INTO goods
-VALUES ('CD017','Blue Box','','','','','','','');
-
-INSERT INTO goods
-VALUES ('CD018','Blue Board','','','','','','','');
-
-INSERT INTO goods
-VALUES ('CD019','Blue Tiger','','','','','','','');
-
-INSERT INTO goods
-VALUES ('CD020','Blue Pig','','','','','','','');
-
-INSERT INTO goods
-VALUES ('CD021','Green Car','','','','','','','');
-
-INSERT INTO goods
-VALUES ('CD022','Green Cat','','','','','','','');
-
-INSERT INTO goods
-VALUES ('CD023','Green Apple','','','','','','','');
-
-INSERT INTO goods
-VALUES ('CD024','Green Smartphone','','','','','','','');
-
-INSERT INTO goods
-VALUES ('CD025','Green Shirt','','','','','','','');
-
-INSERT INTO goods
-VALUES ('CD026','Green Dog','','','','','','','');
-
-INSERT INTO goods
-VALUES ('CD027','Green Box','','','','','','','');
-
-INSERT INTO goods
-VALUES ('CD028','Green Board','','','','','','','');
-
-INSERT INTO goods
-VALUES ('CD029','Green Tiger','','','','','','','');
-
-INSERT INTO goods
-VALUES ('CD030','Green Pig','','','','','','','');
--- Example Data End
